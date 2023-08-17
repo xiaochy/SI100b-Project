@@ -1,0 +1,30 @@
+function [ d ] = gaoSTFT(x, win, nfft, inc) %z
+if length(win) == 1
+    wlen = win;    
+    %win = sqrt(hann(wlen, 'periodic'));
+    win = hann(wlen);
+    %win = sqrt(hamming(wlen, 'periodic'));
+
+else
+    wlen = length(win);
+end
+tmp_x = x;
+%x = x(:);
+win = win(:)%展开
+
+s = size(x, 1);
+
+d = zeros(( 1 + nfft/2), 1 + fix((s-wlen)/inc), size(x, 2));
+
+for m = 1:size(x,2)
+    c = 1;
+    for b = 0:inc:(s-wlen)
+        u = win .* x((b+1):(b+wlen), m);
+        t = fft(u,nfft);
+        d(:,c,m) = t(1:(1+nfft/2));
+        c = c + 1;
+    end
+end
+
+
+end
